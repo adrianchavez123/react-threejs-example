@@ -11,3 +11,17 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+p{
+  font-size:2rem;
+}
+
+.title{
+  color:yellow;
+  opacity: 0.2;
+}
+
+button{
+  padding:10px 40px;
+  border-radius: 20px;
+}
