@@ -8,7 +8,7 @@ import Scene from "./Scene";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
 const creatingCanvasHandler = (state) => {
-  state.gl.setClearColor("cyan", 0.5);
+  // state.gl.setClearColor("cyan", 0.5);
 };
 root.render(
   <>
