@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
 import { Canvas } from "@react-three/fiber";
+import { Perf } from "r3f-perf";
 import "./styles.css";
 import Scene from "./Scene";
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -28,6 +29,7 @@ root.render(
       onCreated={creatingCanvasHandler}
     >
       <Scene />
+      <Perf position="top-left" />
     </Canvas>
   </>
 );
