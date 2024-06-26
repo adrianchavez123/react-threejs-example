@@ -29,7 +29,7 @@ root.render(
       onCreated={creatingCanvasHandler}
     >
       <Scene />
-      <Perf position="top-left" />
+      {/* <Perf position="top-left" /> */}
     </Canvas>
   </>
 );
