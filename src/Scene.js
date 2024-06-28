@@ -1,34 +1,42 @@
-import { OrbitControls } from "@react-three/drei";
-import { useControls, button } from "leva";
-
+import {
+  OrbitControls,
+  Environment,
+  PerspectiveCamera,
+  CubeCamera,
+} from "@react-three/drei";
+import { useFrame } from "@react-three/fiber";
+import { useRef } from "react";
 const Scene = () => {
-  const { position, color, wireframe, scale } = useControls("cube", {
-    position: { value: { x: 0, y: 0, z: 0 }, min: -10, max: 10, step: 0.01 },
-    color: "#ffffff",
-    wireframe: false,
-    click: button(() => {
-      console.log("clicked");
-    }),
-    scale: {
-      options: [1, 2, 3],
-    },
-  });
+  const cubeRef = useRef();
 
-  console.log(scale);
-  const { xRotation } = useControls("sphere", { xRotation: 0 });
+  useFrame((_, delta) => {
+    cubeRef.current.rotation.x += delta;
+    cubeRef.current.rotation.y += delta;
+  });
   return (
     <>
-      <ambientLight intensity={2} />
-      <directionalLight position={[0, 2, 4]} />
-      <mesh position={[position.x, position.y, position.z]} scale={scale}>
-        <boxGeometry />
-        <meshStandardMaterial color={color} wireframe={wireframe} />
-      </mesh>
-      <mesh position={[-2, 0, 0]} xRotation={xRotation}>
-        <sphereBufferGeometry />
-        <meshBasicMaterial color={"red"} />
-      </mesh>
       <OrbitControls />
+      <Environment
+        files={"./envMap/3.hdr"}
+        ground={{ height: 6, radius: 70, scale: 50 }}
+      />
+      {/* <PerspectiveCamera makeDefault position={[0, 0, 5]} fov={35} /> */}
+      <CubeCamera resolution={1024} frames={Infinity}>
+        {(texture) => (
+          <mesh position-y={3}>
+            <sphereGeometry args={[1, 64, 64]} />
+            <meshStandardMaterial
+              envMap={texture}
+              roughness={0}
+              metalness={0.9}
+            />
+          </mesh>
+        )}
+      </CubeCamera>
+      <mesh position={[0, 3, 5]} ref={cubeRef}>
+        <boxGeometry />
+        <meshBasicMaterial color={"purple"} />
+      </mesh>
     </>
   );
 };

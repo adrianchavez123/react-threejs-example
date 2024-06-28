@@ -27,6 +27,7 @@ root.render(
         // position: [2, 2, 5]
       }}
       onCreated={creatingCanvasHandler}
+      shadows
     >
       <Scene />
       {/* <Perf position="top-left" /> */}
