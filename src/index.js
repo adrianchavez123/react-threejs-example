@@ -20,11 +20,11 @@ root.render(
       }}
       orthographic
       camera={{
-        fov: 45,
+        fov: 75,
         near: 0.1,
         far: 100,
         zoom: 120,
-        // position: [2, 2, 5]
+        // position: [0, 0, 5]
       }}
       onCreated={creatingCanvasHandler}
       shadows
