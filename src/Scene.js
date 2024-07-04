@@ -1,75 +1,63 @@
 import {
-  Environment,
-  GradientTexture,
-  MeshDistortMaterial,
-  MeshReflectorMaterial,
-  MeshWobbleMaterial,
+  MeshPortalMaterial,
   OrbitControls,
-  useCursor,
+  RoundedBox,
+  useGLTF,
+  useTexture,
+  Text,
+  CameraControls,
 } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
+import { easing } from "maath";
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
-
 const Scene = () => {
-  const planeRef = useRef();
-  const cubeRef = useRef();
-  const [hover, setHover] = useState(false);
-  const { lerp } = THREE.MathUtils;
-
-  useCursor(false);
-
-  useFrame(() => {
-    cubeRef.current.position.x = lerp(cubeRef.current.position.x, 1, 0.05);
-    planeRef.current.material.distort = lerp(
-      planeRef.current.material.distort,
-      hover ? 0.4 : 0,
-      hover ? 0.05 : 0.01
+  const [active, setActive] = useState(false);
+  const model = useGLTF("./model/1.glb");
+  const texture = useTexture("./texture/1.png");
+  const meshPortalMaterialRef = useRef();
+  const cameraControlsRef = useRef();
+  useFrame((_, delta) => {
+    easing.damp(
+      meshPortalMaterialRef.current,
+      "blend",
+      active ? 1 : 0,
+      0.2,
+      delta
     );
   });
 
-  // useEffect(() => {
-  //   if (hover) {
-  //     planeRef.current.material.distort = 0.4;
-  //   } else {
-  //     planeRef.current.material.distort = 0;
-  //   }
-  // }, [hover]);
+  useEffect(() => {
+    if (active) {
+      cameraControlsRef.current.setLookAt(0, 0, 3, 0, 0, 0, true);
+    } else {
+      cameraControlsRef.current.setLookAt(0, 0, 5, 0, 0, 0, true);
+    }
+  }, [active]);
+  const doubleClickHandler = () => {
+    setActive(!active);
+  };
   return (
     <>
-      <OrbitControls />
-      <ambientLight />
-      {/* <Environment background files="./envMap/1.hdr" /> */}
-
-      {/* <mesh>
-        <boxGeometry args={[1, 1, 1, 32, 32, 32]} />
-        <MeshWobbleMaterial color="#F76E53" factor={3} speed={0.2} />
-      </mesh> */}
-
-      {/* <mesh rotation-x={Math.PI * 0.5} position-y={-0.75}>
-        <planeGeometry args={[6, 6]} />
-        <MeshReflectorMaterial
-          resolution={512}
-          color="gray"
-          blur={[1000, 100]}
-          mixBlur={1}
-        />
-      </mesh> */}
-      <mesh
-        ref={planeRef}
-        onPointerOver={() => setHover(true)}
-        onPointerOut={() => setHover(false)}
+      <CameraControls ref={cameraControlsRef} />
+      {/* <Text font="./font/bold.ttf" position={[0, 1.5, 0.1]} fontSize={0.6}>
+        Eggs
+        <meshBasicMaterial toneMapped={false} />
+      </Text> */}
+      <RoundedBox
+        args={[3, 4, 0.1]}
+        radius={0.1}
+        onDoubleClick={doubleClickHandler}
       >
-        <planeGeometry args={[2, 3, 64, 64]} />
-        <MeshDistortMaterial speed={3} distort={0}>
-          <GradientTexture colors={["aquamarine", "hotpink"]} stops={[0, 1]} />
-        </MeshDistortMaterial>
-      </mesh>
-
-      <mesh ref={cubeRef} position={[-1, -2.5, 0]}>
-        <boxGeometry />
-        <meshBasicMaterial color="purple" />
-      </mesh>
+        <planeGeometry args={[2, 3]} />
+        <MeshPortalMaterial ref={meshPortalMaterialRef}>
+          <primitive object={model.scene} scale={0.6} position-y={0.6} />
+          <mesh>
+            <sphereGeometry args={[3, 64, 64]} />
+            <meshBasicMaterial map={texture} side={THREE.BackSide} />
+          </mesh>
+        </MeshPortalMaterial>
+      </RoundedBox>
     </>
   );
 };
